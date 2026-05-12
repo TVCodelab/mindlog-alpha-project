@@ -1,96 +1,110 @@
 'use client';
-import { Check } from 'lucide-react';
+import { Leaf, Scale, Flower2, Check } from 'lucide-react';
 
 const plans = [
   {
     name: 'Semente',
     price: 'Grátis',
-    desc: 'Ideal para começar sua jornada de autoconhecimento.',
-    features: ['Diário emocional', 'Check-in de humor', '20 mensagens/dia com IA', 'Gráficos básicos', 'Comunidade'],
-    button: 'Começar Grátis',
+    period: 'para sempre',
+    icon: <Leaf size={40} />,
+    color: '#1dd1a1',
+    features: ['Diário + check-in de humor', '40 mensagens/dia com a IA', 'Gráficos básicos', 'Acesso à comunidade'],
     popular: false
   },
   {
     name: 'Equilíbrio',
-    price: 'R$19,90',
-    period: '/mês',
-    desc: 'O suporte completo para o seu dia a dia emocional.',
-    features: ['Tudo do Semente', 'IA ilimitada', '4 personas de IA', 'Insights avançados', 'Exportação PDF', 'Histórico ilimitado'],
-    button: 'Assinar Agora',
+    price: 'R$ 19,90',
+    period: 'por mês',
+    icon: <Scale size={40} />,
+    color: '#ffffff',
+    bg: '#7267e0',
+    features: ['Chat com IA ilimitado', '4 personas de IA', 'Insights avançados + detecção de burnout', 'Exportar diário em PDF'],
     popular: true
   },
   {
     name: 'Florescer',
-    price: 'R$49,90',
-    period: '/mês',
-    desc: 'Para quem busca o máximo de suporte e personalização.',
-    features: ['Tudo do Equilíbrio', 'IA personalizada', 'Relatórios emocionais', 'Meditações guiadas', 'Criação de grupos', 'Suporte prioritário'],
-    button: 'Escolher Florescer',
+    price: 'R$ 49,90',
+    period: 'por mês',
+    icon: <Flower2 size={40} />,
+    color: '#ff9ff3',
+    features: ['Tudo do Equilíbrio', 'Persona de IA 100% customizada', 'Relatório de análise profunda', 'Sessões guiadas de meditação', 'Suporte humano prioritário'],
     popular: false
   }
 ];
 
 export default function Pricing() {
   return (
-    <section id="planos" style={{ padding: '100px 0', background: 'var(--accent-soft)' }}>
+    <section id="planos" style={{ padding: '100px 0', background: 'var(--bg-lavender)' }}>
       <div className="container">
-        <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-          <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Planos que crescem com você</h2>
-          <p style={{ color: 'var(--text-muted)' }}>Escolha o nível de suporte ideal para o seu momento.</p>
-        </div>
+        <h2 style={{ textAlign: 'center', fontSize: '3.5rem', color: '#341f97', marginBottom: '5rem', fontWeight: '900' }}>
+          Confira nossos planos
+        </h2>
 
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-          gap: '2rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
+          gap: '2.5rem',
           alignItems: 'center'
         }}>
           {plans.map((p, i) => (
-            <div key={i} className="glass" style={{ 
-              padding: '3rem 2rem', 
+            <div key={i} style={{ 
+              background: p.bg || 'white', 
+              padding: '4rem 2rem', 
+              borderRadius: '30px', 
+              textAlign: 'center',
+              boxShadow: '0 15px 40px rgba(0,0,0,0.05)',
+              color: p.bg ? 'white' : 'inherit',
               position: 'relative',
-              background: p.popular ? 'var(--background)' : 'var(--glass-bg)',
-              border: p.popular ? '2px solid var(--primary)' : '1px solid var(--glass-border)',
-              boxShadow: p.popular ? '0 20px 40px rgba(138, 112, 214, 0.2)' : 'var(--shadow)',
-              transform: p.popular ? 'scale(1.05)' : 'none',
-              zIndex: p.popular ? '2' : '1'
+              transform: p.popular ? 'scale(1.08)' : 'none',
+              zIndex: p.popular ? 2 : 1
             }}>
               {p.popular && (
                 <div style={{ 
                   position: 'absolute', 
-                  top: '-15px', 
+                  top: '-20px', 
                   left: '50%', 
                   transform: 'translateX(-50%)', 
-                  background: 'var(--primary)', 
+                  background: '#ff70a6', 
                   color: 'white', 
-                  padding: '0.4rem 1.2rem', 
+                  padding: '0.5rem 2rem', 
                   borderRadius: '100px', 
-                  fontSize: '0.85rem', 
-                  fontWeight: '700' 
+                  fontSize: '0.8rem', 
+                  fontWeight: '800' 
                 }}>
                   MAIS POPULAR
                 </div>
               )}
-              
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{p.name}</h3>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem', marginBottom: '1rem' }}>
-                <span style={{ fontSize: '2.5rem', fontWeight: '800' }}>{p.price}</span>
-                {p.period && <span style={{ color: 'var(--text-muted)' }}>{p.period}</span>}
+
+              <div style={{ 
+                width: '70px', 
+                height: '70px', 
+                background: p.bg ? 'rgba(0,0,0,0.1)' : '#f3f0ff', 
+                color: p.color,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 2rem'
+              }}>
+                {p.icon}
               </div>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem', minHeight: '3rem' }}>{p.desc}</p>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2.5rem' }}>
+
+              <h3 style={{ fontSize: '1.8rem', marginBottom: '1rem', fontWeight: '800' }}>{p.name}</h3>
+              <div style={{ fontSize: '3.2rem', fontWeight: '900', color: p.bg ? 'white' : p.color, marginBottom: '0.2rem' }}>
+                {p.price}
+              </div>
+              <div style={{ fontSize: '1rem', color: p.bg ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)', marginBottom: '3rem', fontStyle: 'italic' }}>
+                {p.period}
+              </div>
+
+              <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
                 {p.features.map((f, j) => (
-                  <div key={j} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', fontSize: '0.9rem' }}>
-                    <div style={{ color: 'var(--primary)', display: 'flex' }}><Check size={18} /></div>
-                    {f}
+                  <div key={j} style={{ display: 'flex', gap: '0.8rem', fontSize: '0.95rem', alignItems: 'flex-start' }}>
+                    <Check size={18} style={{ flexShrink: 0, marginTop: '3px' }} />
+                    <span>{f}</span>
                   </div>
                 ))}
               </div>
-
-              <button className={p.popular ? 'btn-primary' : 'btn-secondary'} style={{ width: '100%', padding: '1rem' }}>
-                {p.button}
-              </button>
             </div>
           ))}
         </div>
