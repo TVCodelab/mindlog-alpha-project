@@ -47,7 +47,7 @@ export default function DashboardHome() {
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100 } }
+    visible: { y: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 100 } }
   };
 
   return (
@@ -150,7 +150,7 @@ export default function DashboardHome() {
                 <motion.div 
                   initial={{ height: 0 }}
                   animate={{ height: `${h}%` }}
-                  transition={{ duration: 1.5, delay: i * 0.1, type: 'spring' }}
+                  transition={{ duration: 1.5, delay: i * 0.1, type: 'spring' as const }}
                   style={{ 
                     position: 'absolute', 
                     bottom: 0, 
