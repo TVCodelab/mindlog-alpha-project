@@ -1,57 +1,87 @@
 'use client';
-import { useState } from 'react';
-import { Save, Plus, Calendar } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Save, Book, Calendar, Trash2, Sparkles } from 'lucide-react';
 
-export default function Diary() {
-  const [entries, setEntries] = useState([
-    { date: '12 de Maio, 2026', title: 'Um dia reflexivo', content: 'Hoje senti que finalmente estou conseguindo lidar melhor com as pressões do trabalho...' },
-    { date: '10 de Maio, 2026', title: 'Pequenas vitórias', content: 'Consegui terminar o livro que estava lendo e me senti muito produtivo.' }
-  ]);
+export default function DiaryPage() {
+  const [entry, setEntry] = useState('');
+  const [entries, setEntries] = useState<{id: number, date: string, content: string}[]>([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('mindlog_entries');
+    if (saved) setEntries(JSON.parse(saved));
+  }, []);
+
+  const saveEntry = () => {
+    if (!entry.trim()) return;
+    const newEntry = {
+      id: Date.now(),
+      date: new Date().toLocaleString('pt-BR'),
+      content: entry
+    };
+    const updated = [newEntry, ...entries];
+    setEntries(updated);
+    localStorage.setItem('mindlog_entries', JSON.stringify(updated));
+    setEntry('');
+  };
+
+  const deleteEntry = (id: number) => {
+    const updated = entries.filter(e => e.id !== id);
+    setEntries(updated);
+    localStorage.setItem('mindlog_entries', JSON.stringify(updated));
+  };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-      <header style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <h1 style={{ fontSize: '1.5rem' }}>Meu Diário Pessoal</h1>
-          <p style={{ color: 'var(--text-muted)' }}>Registre seus pensamentos mais profundos.</p>
-        </div>
-        <button className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Plus size={20} /> Novo Relato
-        </button>
-      </header>
-
-      <div className="glass" style={{ background: 'white', padding: '2.5rem', marginBottom: '3rem' }}>
-        <div style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem' }}>
-          <input 
-            type="text" 
-            placeholder="Título do seu relato..." 
-            style={{ width: '100%', fontSize: '1.5rem', fontWeight: '700', border: 'none', outline: 'none', background: 'transparent' }}
-          />
-        </div>
+    <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '2rem' }}>
+      <motion.div 
+        initial={{ opacity: 0, x: -20 }} 
+        animate={{ opacity: 1, x: 0 }}
+        className="glass-card" 
+        style={{ padding: '2.5rem' }}
+      >
+        <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+          <Book color="var(--primary)" /> Novo Registro
+        </h2>
         <textarea 
-          placeholder="Como foi seu dia? Como você está se sentindo?"
-          style={{ width: '100%', minHeight: '300px', border: 'none', outline: 'none', resize: 'none', fontSize: '1.1rem', lineHeight: '1.8', background: 'transparent' }}
-        ></textarea>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem' }}>
-          <button className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Save size={20} /> Salvar Relato
-          </button>
-        </div>
-      </div>
+          value={entry}
+          onChange={(e) => setEntry(e.target.value)}
+          placeholder="Como foi o seu dia hoje? Escreva livremente..."
+          style={{ minHeight: '300px', marginBottom: '2rem', fontSize: '1.1rem', resize: 'none' }}
+        />
+        <button onClick={saveEntry} className="btn-soft" style={{ width: '100%', justifyContent: 'center' }}>
+          <Save size={20} /> Salvar no meu diário
+        </button>
+      </motion.div>
 
-      <h3 style={{ marginBottom: '1.5rem' }}>Relatos Anteriores</h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {entries.map((entry, i) => (
-          <div key={i} className="glass" style={{ background: 'white', padding: '1.5rem', cursor: 'pointer' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary)', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.5rem' }}>
-              <Calendar size={14} /> {entry.date}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--text-muted)' }}>Registros Anteriores</h3>
+        <AnimatePresence>
+          {entries.length === 0 ? (
+            <div style={{ padding: '2rem', textAlign: 'center', opacity: 0.5 }}>
+              <Calendar size={40} style={{ marginBottom: '1rem' }} />
+              <p>Nenhum registro ainda.</p>
             </div>
-            <h4 style={{ marginBottom: '0.5rem' }}>{entry.title}</h4>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-              {entry.content}
-            </p>
-          </div>
-        ))}
+          ) : (
+            entries.map((e) => (
+              <motion.div
+                key={e.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="glass-card"
+                style={{ padding: '1.5rem' }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--primary)' }}>{e.date}</span>
+                  <button onClick={() => deleteEntry(e.id)} style={{ color: '#ff6b6b', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+                <p style={{ fontSize: '0.95rem', lineHeight: '1.6', color: 'var(--text-main)' }}>{e.content}</p>
+              </motion.div>
+            ))
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

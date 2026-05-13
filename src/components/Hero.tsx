@@ -1,7 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowRight, Heart } from 'lucide-react';
 
 export default function Hero() {
   return (
@@ -16,22 +16,20 @@ export default function Hero() {
       padding: '4rem 2rem',
       overflow: 'hidden'
     }}>
-      {/* Luzes dinâmicas ao fundo */}
+      {/* Blobs Suaves */}
       <motion.div 
-        animate={{ 
-          scale: [1, 1.5, 1],
-          opacity: [0.3, 0.6, 0.3],
-        }}
-        transition={{ duration: 8, repeat: Infinity }}
+        animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
+        transition={{ duration: 20, repeat: Infinity }}
         style={{ 
           position: 'absolute', 
-          width: '800px', 
-          height: '800px', 
-          background: 'radial-gradient(circle, var(--primary) 0%, transparent 70%)',
-          filter: 'blur(100px)',
+          width: '600px', 
+          height: '600px', 
+          background: 'rgba(157, 141, 241, 0.15)',
+          filter: 'blur(80px)',
           top: '-10%',
-          left: '-10%',
-          zIndex: 0
+          right: '-10%',
+          zIndex: 0,
+          borderRadius: '50%'
         }}
       />
 
@@ -39,89 +37,74 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
           style={{ 
             display: 'inline-flex', 
             alignItems: 'center', 
             gap: '0.8rem', 
             padding: '0.6rem 1.5rem', 
-            background: 'rgba(255,255,255,0.05)', 
+            background: 'white', 
             borderRadius: '100px', 
-            border: '1px solid rgba(255,255,255,0.1)',
+            boxShadow: '0 4px 15px rgba(157, 141, 241, 0.1)',
             marginBottom: '3rem',
-            color: 'var(--secondary)',
+            color: 'var(--primary-dark)',
             fontSize: '0.9rem',
-            fontWeight: '700',
-            textTransform: 'uppercase',
-            letterSpacing: '0.2em'
+            fontWeight: '700'
           }}
         >
-          <Sparkles size={16} /> A Revolução da Saúde Mental
+          <Heart size={16} fill="var(--primary)" /> Sua mente em primeiro lugar
         </motion.div>
 
         <motion.h1 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, type: 'spring' }}
           style={{ 
-            fontSize: 'clamp(4rem, 15vw, 12rem)', 
-            fontWeight: '900', 
-            lineHeight: '0.9', 
+            fontSize: 'clamp(4rem, 12vw, 10rem)', 
+            fontWeight: '800', 
+            lineHeight: '0.95', 
             marginBottom: '2rem',
-            letterSpacing: '-0.05em'
+            color: 'var(--text-main)'
           }}
         >
-          <span className="text-gradient">MindLog</span>
+          Mind<span className="text-gradient">Log</span>
         </motion.h1>
 
         <motion.p 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 1 }}
+          transition={{ delay: 0.5 }}
           style={{ 
-            fontSize: '1.5rem', 
-            color: 'var(--text-dim)', 
-            maxWidth: '700px', 
+            fontSize: '1.4rem', 
+            color: 'var(--text-muted)', 
+            maxWidth: '650px', 
             margin: '0 auto 4rem auto',
-            lineHeight: '1.6',
-            fontWeight: '500'
+            lineHeight: '1.6'
           }}
         >
-          Uma experiência imersiva de autoconhecimento guiada por <span style={{ color: '#fff', fontWeight: '800' }}>Inteligência Artificial</span>. Curando mentes com tecnologia e empatia.
+          Um espaço seguro e inteligente para cuidar da sua saúde emocional com apoio de IA 24h por dia.
         </motion.p>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap' }}>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link href="/cadastro" className="btn-premium" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              Começar Jornada <ArrowRight size={20} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+          <motion.div whileHover={{ scale: 1.05 }}>
+            <Link href="/cadastro" className="btn-soft" style={{ fontSize: '1.1rem', padding: '1.2rem 3rem' }}>
+              Começar Grátis <ArrowRight size={20} />
             </Link>
           </motion.div>
           
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <motion.div whileHover={{ scale: 1.05 }}>
             <Link href="/login" style={{ 
-              color: '#fff', 
+              color: 'var(--primary-dark)', 
               fontWeight: '700', 
               fontSize: '1.1rem', 
               padding: '1.2rem 3rem',
               borderRadius: '100px',
-              border: '1px solid rgba(255,255,255,0.2)',
-              background: 'rgba(255,255,255,0.05)',
-              backdropFilter: 'blur(10px)'
+              background: 'white',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
             }}>
-              Já tenho conta
+              Entrar
             </Link>
           </motion.div>
         </div>
       </div>
-
-      {/* Elementos decorativos flutuantes */}
-      <motion.div 
-        animate={{ y: [0, -20, 0], rotate: 360 }}
-        transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-        style={{ position: 'absolute', right: '10%', bottom: '20%', opacity: 0.2, color: 'var(--secondary)' }}
-      >
-        <Sparkles size={100} />
-      </motion.div>
     </section>
   );
 }
