@@ -124,14 +124,14 @@ export default function Pricing() {
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="btn-premium"
+                className="btn-modern"
                 style={{ 
                   width: '100%', 
-                  background: p.bg ? '#fff' : 'linear-gradient(135deg, var(--primary), var(--secondary))',
-                  color: p.bg ? 'var(--primary)' : '#fff'
+                  background: p.bg ? 'white' : 'linear-gradient(135deg, var(--primary), var(--primary-dark))',
+                  color: p.bg ? 'var(--primary)' : 'white'
                 }}
               >
-                Selecionar Plano
+                Escolher {p.name} <Sparkles size={18} />
               </motion.button>
             </motion.div>
           ))}
