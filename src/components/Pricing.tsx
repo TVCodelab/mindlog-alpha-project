@@ -1,5 +1,6 @@
 'use client';
-import { Leaf, Scale, Flower2, Check } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Leaf, Scale, Flower2, Check, Sparkles } from 'lucide-react';
 
 const plans = [
   {
@@ -34,78 +35,128 @@ const plans = [
 
 export default function Pricing() {
   return (
-    <section id="planos" style={{ padding: '100px 0', background: 'var(--bg-lavender)' }}>
+    <section id="planos" style={{ padding: '120px 0', background: 'var(--bg-lavender)', position: 'relative', overflow: 'hidden' }}>
       <div className="container">
-        <h2 style={{ textAlign: 'center', fontSize: '3.5rem', color: '#341f97', marginBottom: '5rem', fontWeight: '900' }}>
-          Confira nossos planos
-        </h2>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          style={{ textAlign: 'center', marginBottom: '6rem' }}
+        >
+          <h2 style={{ fontSize: '4.5rem', color: '#341f97', fontWeight: '950', letterSpacing: '-0.04em' }}>
+            Confira nossos <span className="text-gradient">planos</span>
+          </h2>
+          <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)', fontWeight: '600', marginTop: '1rem' }}>
+            Escolha o nível de cuidado que você merece hoje.
+          </p>
+        </motion.div>
 
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
-          gap: '2.5rem',
+          gap: '3rem',
           alignItems: 'center'
         }}>
           {plans.map((p, i) => (
-            <div key={i} style={{ 
-              background: p.bg || 'white', 
-              padding: '4rem 2rem', 
-              borderRadius: '30px', 
-              textAlign: 'center',
-              boxShadow: '0 15px 40px rgba(0,0,0,0.05)',
-              color: p.bg ? 'white' : 'inherit',
-              position: 'relative',
-              transform: p.popular ? 'scale(1.08)' : 'none',
-              zIndex: p.popular ? 2 : 1
-            }}>
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.2 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -20, scale: 1.02 }}
+              style={{ 
+                background: p.bg || 'white', 
+                padding: '5rem 2.5rem', 
+                borderRadius: '40px', 
+                textAlign: 'center',
+                boxShadow: p.popular ? '0 30px 60px rgba(114, 103, 224, 0.3)' : '0 20px 40px rgba(0,0,0,0.05)',
+                color: p.bg ? 'white' : 'inherit',
+                position: 'relative',
+                zIndex: p.popular ? 2 : 1,
+                border: p.bg ? 'none' : '1px solid rgba(0,0,0,0.05)'
+              }}
+            >
               {p.popular && (
-                <div style={{ 
-                  position: 'absolute', 
-                  top: '-20px', 
-                  left: '50%', 
-                  transform: 'translateX(-50%)', 
-                  background: '#ff70a6', 
-                  color: 'white', 
-                  padding: '0.5rem 2rem', 
-                  borderRadius: '100px', 
-                  fontSize: '0.8rem', 
-                  fontWeight: '800' 
-                }}>
-                  MAIS POPULAR
-                </div>
+                <motion.div 
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  style={{ 
+                    position: 'absolute', 
+                    top: '-25px', 
+                    left: '50%', 
+                    transform: 'translateX(-50%)', 
+                    background: '#ff70a6', 
+                    color: 'white', 
+                    padding: '0.6rem 2.5rem', 
+                    borderRadius: '100px', 
+                    fontSize: '0.9rem', 
+                    fontWeight: '900',
+                    boxShadow: '0 10px 20px rgba(255, 112, 166, 0.4)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}
+                >
+                  <Sparkles size={16} /> MAIS POPULAR
+                </motion.div>
               )}
 
-              <div style={{ 
-                width: '70px', 
-                height: '70px', 
-                background: p.bg ? 'rgba(0,0,0,0.1)' : '#f3f0ff', 
-                color: p.color,
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 2rem'
-              }}>
+              <motion.div 
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.8 }}
+                style={{ 
+                  width: '80px', 
+                  height: '80px', 
+                  background: p.bg ? 'rgba(255,255,255,0.15)' : '#f3f0ff', 
+                  color: p.color,
+                  borderRadius: '24px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 2.5rem'
+                }}
+              >
                 {p.icon}
-              </div>
+              </motion.div>
 
-              <h3 style={{ fontSize: '1.8rem', marginBottom: '1rem', fontWeight: '800' }}>{p.name}</h3>
-              <div style={{ fontSize: '3.2rem', fontWeight: '900', color: p.bg ? 'white' : p.color, marginBottom: '0.2rem' }}>
+              <h3 style={{ fontSize: '2rem', marginBottom: '1rem', fontWeight: '900' }}>{p.name}</h3>
+              <div style={{ fontSize: '3.8rem', fontWeight: '950', color: p.bg ? 'white' : p.color, marginBottom: '0.2rem', letterSpacing: '-0.02em' }}>
                 {p.price}
               </div>
-              <div style={{ fontSize: '1rem', color: p.bg ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)', marginBottom: '3rem', fontStyle: 'italic' }}>
+              <div style={{ fontSize: '1.1rem', color: p.bg ? 'rgba(255,255,255,0.8)' : 'var(--text-muted)', marginBottom: '3.5rem', fontStyle: 'italic', fontWeight: '500' }}>
                 {p.period}
               </div>
 
-              <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
+              <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '1.2rem', marginBottom: '3rem' }}>
                 {p.features.map((f, j) => (
-                  <div key={j} style={{ display: 'flex', gap: '0.8rem', fontSize: '0.95rem', alignItems: 'flex-start' }}>
-                    <Check size={18} style={{ flexShrink: 0, marginTop: '3px' }} />
+                  <motion.div key={j} whileHover={{ x: 5 }} style={{ display: 'flex', gap: '1rem', fontSize: '1rem', alignItems: 'flex-start', fontWeight: '500' }}>
+                    <Check size={22} style={{ flexShrink: 0, color: p.bg ? 'white' : p.color }} />
                     <span>{f}</span>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-            </div>
+
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{ 
+                  width: '100%', 
+                  padding: '1.2rem', 
+                  borderRadius: '16px', 
+                  border: 'none', 
+                  background: p.bg ? 'white' : 'var(--primary)', 
+                  color: p.bg ? 'var(--primary)' : 'white',
+                  fontWeight: '900',
+                  fontSize: '1.1rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
+                }}
+              >
+                Começar Agora
+              </motion.button>
+            </motion.div>
           ))}
         </div>
       </div>
