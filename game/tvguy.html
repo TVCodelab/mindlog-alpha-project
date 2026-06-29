@@ -227,6 +227,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 'use strict';
 // ============================================================
@@ -252,6 +253,33 @@ scene.fog = new THREE.FogExp2(0x000000, 0.055);
 // ---- Camera ----
 const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.04, 35);
 camera.rotation.order = 'YXZ';
+
+// ---- GLTF Model Loader ----
+// To add your own Sketchfab models:
+//   1. Download as GLB from Sketchfab (free/CC models)
+//   2. Place in game/ folder next to this file
+//   3. Call: loadGLTF('./yourmodel.glb', room1, {x,y,z}, scale, rotY)
+const _gltfLoader = new THREE.GLTFLoader();
+const _modelCache = {};
+function loadGLTF(url, group, pos, scale=1, rotY=0, onLoad){
+  if(_modelCache[url]){
+    const clone=_modelCache[url].clone();
+    _applyModel(clone,group,pos,scale,rotY); if(onLoad) onLoad(clone); return;
+  }
+  _gltfLoader.load(url, gltf=>{
+    const m=gltf.scene;
+    _modelCache[url]=m;
+    _applyModel(m,group,pos,scale,rotY);
+    if(onLoad) onLoad(m);
+  }, undefined, e=>console.warn('[GLTFLoader] failed:',url,e));
+}
+function _applyModel(m,group,pos,scale,rotY){
+  m.position.set(pos.x,pos.y,pos.z);
+  m.scale.setScalar(scale);
+  m.rotation.y=rotY;
+  m.traverse(c=>{ if(c.isMesh){ c.castShadow=false; c.receiveShadow=false; } });
+  group.add(m);
+}
 
 window.addEventListener('resize', () => {
   renderer.setSize(innerWidth, innerHeight);
@@ -563,7 +591,30 @@ let tvLight=null, tvLightBase=0.9;
 const floorTex=mkFloor(), wallTex=mkWall();
 const mat = t => new THREE.MeshLambertMaterial({map:t});
 const solid = c => new THREE.MeshLambertMaterial({color:c});
+// Phong materials for objects that need specular highlights (metal, plastic, glass)
+const metal = (c,sh=18) => new THREE.MeshPhongMaterial({color:c,specular:0x333333,shininess:sh});
+const plastic = (c,sh=8) => new THREE.MeshPhongMaterial({color:c,specular:0x111111,shininess:sh});
+const glass2 = (c,op=.55) => new THREE.MeshPhongMaterial({color:c,specular:0x888888,shininess:60,transparent:true,opacity:op,side:THREE.DoubleSide});
 function box(w,h,d,m){ return new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m); }
+
+// ============================================================
+//  MODELOS EXTERNOS (GLB/GLTF)
+//  Como adicionar um modelo do Sketchfab:
+//    1. Sketchfab → baixe como GLB (botão "Download")
+//    2. Coloque o .glb na pasta game/ deste projeto
+//    3. Descomente e adapte uma das linhas abaixo
+//
+//  Exemplos (substitua o caminho pelo seu arquivo):
+//    loadGLTF('./cadeira.glb',  room1, {x:-1.5,y:0,z:-4.5}, 1,   0);
+//    loadGLTF('./cama.glb',     room1, {x:3.8, y:0,z:1.4},  1,   0);
+//    loadGLTF('./mesa.glb',     room1, {x:-3.8,y:0,z:2.8},  1,   Math.PI);
+//    loadGLTF('./tv_retro.glb', room1, {x:0,   y:0.72,z:-5.4}, 1, 0);
+//
+//  Sites com modelos gratuitos (CC0/CC-BY):
+//    • sketchfab.com → filtro "Downloadable" + "Creative Commons"
+//    • poly.pizza
+//    • quaternius.com
+// ============================================================
 
 // ---- ROOM 1 (Quarto) ----
 const room1=new THREE.Group();
@@ -586,8 +637,8 @@ const tableTop=box(2.4,0.08,1.1,solid(0x0d0b09)); tableTop.position.set(0,0.72,-
 });
 
 // TV Body
-const tvBody=box(1.5,1.1,0.75,solid(0x0e0e0e)); tvBody.position.set(0,1.33,-5.4); room1.add(tvBody);
-const tvBezel=box(1.56,1.16,0.02,solid(0x080808)); tvBezel.position.set(0,1.33,-5.02); room1.add(tvBezel);
+const tvBody=box(1.5,1.1,0.75,plastic(0x0e0e0e,12)); tvBody.position.set(0,1.33,-5.4); room1.add(tvBody);
+const tvBezel=box(1.56,1.16,0.02,plastic(0x060606,20)); tvBezel.position.set(0,1.33,-5.02); room1.add(tvBezel);
 // TV Screen (canvas texture)
 const tvScreen=new THREE.Mesh(new THREE.PlaneGeometry(1.1,0.82),new THREE.MeshBasicMaterial({map:tvTex}));
 tvScreen.position.set(0,1.33,-5.0); room1.add(tvScreen);
@@ -627,8 +678,7 @@ const back=box(0.7,0.7,0.06,seatM); back.position.set(-1.5,1.07,-4.84); room1.ad
 
 // Window (right wall) — glass pane + exterior glow hint
 const windowFrame=box(0.08,1.4,1.8,solid(0x0a0a0c)); windowFrame.position.set(5.46,1.6,1); room1.add(windowFrame);
-const glass=new THREE.Mesh(new THREE.PlaneGeometry(1.5,1.1),
-  new THREE.MeshBasicMaterial({color:0x0a1510,transparent:true,opacity:.6,side:THREE.DoubleSide}));
+const glass=new THREE.Mesh(new THREE.PlaneGeometry(1.5,1.1), glass2(0x0d1f18,0.5));
 glass.rotation.y=Math.PI/2; glass.position.set(5.44,1.6,1); room1.add(glass);
 
 // Door (left wall, back area) — initially closed-ish
@@ -649,9 +699,9 @@ stickyMesh.position.set(-3.05,0.80,2.48); stickyMesh.rotation.z=0.07; room1.add(
 // --- Materiais reutilizáveis ---
 const matWood   = solid(0x2a1f14);
 const matDark   = solid(0x141210);
-const matMetal  = solid(0x1a1a1c);
+const matMetal  = metal(0x1c1c1e, 22);   // Phong — brilho metálico
 const matPaper  = solid(0x2a2820);
-const matFabric = solid(0x1e1a16);
+const matFabric = plastic(0x1e1a16, 3);  // Phong sutil — tecido
 const matRug    = solid(0x1a0d0d);
 
 // --- Tapete ---
@@ -680,12 +730,12 @@ const dBack  = box(0.65,0.55,0.05,matDark);   dBack.position.set(-3.8,0.84,1.65)
 [-0.28,0.28].forEach(x=>{ const l=box(0.05,0.56,0.05,matDark); l.position.set(-3.8+x,0.28,1.9); room1.add(l); });
 
 // Objetos sobre a escrivaninha
-const monitor2= box(0.7,0.48,0.08, solid(0x0c0c0e)); monitor2.position.set(-3.8,1.06,2.48); room1.add(monitor2);
+const monitor2= box(0.7,0.48,0.08, plastic(0x0c0c0e,14)); monitor2.position.set(-3.8,1.06,2.48); room1.add(monitor2);
 const mScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.56,0.36),
   new THREE.MeshBasicMaterial({color:0x001a00})); mScreen.position.set(-3.8,1.06,2.43); room1.add(mScreen);
 const keyboard= box(0.7,0.03,0.24, solid(0x0e0e10)); keyboard.position.set(-3.8,0.78,2.62); room1.add(keyboard);
 // Xícara
-const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.038,0.1,8), solid(0x181614));
+const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.038,0.1,10), metal(0x1a1816,14));
 cup.position.set(-3.1,0.8,2.62); room1.add(cup);
 // Papéis espalhados
 [[-.6,0],[-0.2,0.05],[0.2,-0.04]].forEach(([x,r])=>{
