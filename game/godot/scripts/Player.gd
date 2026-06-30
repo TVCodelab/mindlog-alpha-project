@@ -6,10 +6,9 @@ extends CharacterBody3D
 # ─────────────────────────────────────────
 
 # Nodes (assign in editor or on _ready)
-@onready var camera: Camera3D         = $Camera3D
-@onready var raycast: RayCast3D       = $Camera3D/RayCast3D
-@onready var uv_light: SpotLight3D    = $Camera3D/UVLight
-@onready var interact_prompt: Label   = $Camera3D/HUD/InteractPrompt
+@onready var camera: Camera3D      = $Camera3D
+@onready var raycast: RayCast3D    = $Camera3D/RayCast3D
+@onready var uv_light: SpotLight3D = $Camera3D/UVLight
 
 # Movement
 const SPEED_WALK:   float = 4.0
@@ -162,13 +161,15 @@ func _try_interact() -> void:
 
 
 func _update_interact_prompt() -> void:
-	if not is_instance_valid(interact_prompt):
-		return
 	var show = raycast.is_colliding()
 	if show:
 		var obj = raycast.get_collider()
 		show = obj != null and obj.has_method("interact")
-	interact_prompt.visible = show
+	# Emite sinal para o HUD mostrar/esconder o prompt
+	if show and raycast.is_colliding():
+		var obj = raycast.get_collider()
+		if obj and obj.has_method("get_prompt"):
+			Game.notify.emit(obj.get_prompt(), 0.12)
 
 
 func _handle_touch(event: InputEventScreenTouch) -> void:
