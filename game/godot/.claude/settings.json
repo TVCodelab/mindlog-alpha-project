@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "godot": {
+      "command": "npx",
+      "args": ["-y", "godot-mcp@latest"],
+      "env": {
+        "GODOT_EXECUTABLE": "/Applications/Godot.app/Contents/MacOS/Godot"
+      }
+    },
+    "pixellab": {
+      "command": "npx",
+      "args": ["-y", "@pixellab/mcp-server"],
+      "env": {
+        "PIXELLAB_API_KEY": "SUA_CHAVE_AQUI"
+      }
+    }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(godot:*)",
+      "Bash(npx:*)"
+    ]
+  }
+}
