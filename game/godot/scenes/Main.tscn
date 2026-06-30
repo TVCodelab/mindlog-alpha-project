@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/ui/VHSOverlay.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://assets/models/hauntedhouse/source/House.fbx" id="3"]
 
 [sub_resource type="Environment" id="Environment_1"]
 background_mode = 1
@@ -12,22 +13,10 @@ ambient_light_color = Color(0.03, 0.02, 0.05, 1)
 ambient_light_energy = 0.8
 fog_enabled = true
 fog_light_color = Color(0, 0, 0, 1)
-fog_density = 0.04
-
-[sub_resource type="BoxMesh" id="BoxMesh_floor"]
-size = Vector3(12, 0.1, 14)
+fog_density = 0.03
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
-size = Vector3(12, 0.1, 14)
-
-[sub_resource type="BoxMesh" id="BoxMesh_wall"]
-size = Vector3(12, 3.6, 0.15)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_wall"]
-size = Vector3(12, 3.6, 0.15)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_sidewall"]
-size = Vector3(0.15, 3.6, 14)
+size = Vector3(60, 0.2, 60)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_script")
@@ -35,61 +24,30 @@ script = ExtResource("1_script")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_1")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="."]
-position = Vector3(0, 3.2, 0)
-light_color = Color(0.9, 0.85, 0.65, 1)
-light_energy = 1.8
-omni_range = 12.0
+[node name="AmbientLight" type="OmniLight3D" parent="."]
+position = Vector3(0, 4.0, 0)
+light_color = Color(0.85, 0.8, 0.6, 1)
+light_energy = 1.2
+omni_range = 20.0
 shadow_enabled = false
 
 [node name="TVGlow" type="OmniLight3D" parent="."]
-position = Vector3(0, 1.4, -4.8)
+position = Vector3(0, 1.2, -3.0)
 light_color = Color(0.25, 0.9, 0.38, 1)
-light_energy = 0.9
-omni_range = 6.0
+light_energy = 1.2
+omni_range = 8.0
 
-[node name="Room" type="Node3D" parent="."]
+[node name="House" parent="." instance=ExtResource("3")]
+position = Vector3(0, 0, 0)
+scale = Vector3(0.01, 0.01, 0.01)
 
-[node name="Floor" type="StaticBody3D" parent="Room"]
-position = Vector3(0, -0.05, 0)
+[node name="FloorCollider" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.1, 0)
 
-[node name="FloorMesh" type="MeshInstance3D" parent="Room/Floor"]
-mesh = SubResource("BoxMesh_floor")
-
-[node name="FloorCollision" type="CollisionShape3D" parent="Room/Floor"]
+[node name="FloorShape" type="CollisionShape3D" parent="FloorCollider"]
 shape = SubResource("BoxShape3D_floor")
 
-[node name="WallBack" type="StaticBody3D" parent="Room"]
-position = Vector3(0, 1.8, -7)
-
-[node name="WallBackMesh" type="MeshInstance3D" parent="Room/WallBack"]
-mesh = SubResource("BoxMesh_wall")
-
-[node name="WallBackCollision" type="CollisionShape3D" parent="Room/WallBack"]
-shape = SubResource("BoxShape3D_wall")
-
-[node name="WallFront" type="StaticBody3D" parent="Room"]
-position = Vector3(0, 1.8, 7)
-
-[node name="WallFrontMesh" type="MeshInstance3D" parent="Room/WallFront"]
-mesh = SubResource("BoxMesh_wall")
-
-[node name="WallFrontCollision" type="CollisionShape3D" parent="Room/WallFront"]
-shape = SubResource("BoxShape3D_wall")
-
-[node name="WallLeft" type="StaticBody3D" parent="Room"]
-position = Vector3(-6, 1.8, 0)
-
-[node name="WallLeftCollision" type="CollisionShape3D" parent="Room/WallLeft"]
-shape = SubResource("BoxShape3D_sidewall")
-
-[node name="WallRight" type="StaticBody3D" parent="Room"]
-position = Vector3(6, 1.8, 0)
-
-[node name="WallRightCollision" type="CollisionShape3D" parent="Room/WallRight"]
-shape = SubResource("BoxShape3D_sidewall")
-
 [node name="Player" parent="." instance=ExtResource("1")]
-position = Vector3(0, 0, 2)
+position = Vector3(0, 0.2, 0)
 
 [node name="VHSOverlay" parent="." instance=ExtResource("2")]

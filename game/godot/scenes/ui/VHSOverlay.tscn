@@ -10,7 +10,7 @@ shader_parameter/chroma_shift = 0.006
 shader_parameter/wobble_strength = 0.003
 shader_parameter/vignette_strength = 0.65
 shader_parameter/color_bleed = 0.35
-shader_parameter/pixel_size = Vector2(640, 360)
+shader_parameter/pixel_size = Vector2(1280, 720)
 
 [node name="VHSOverlay" type="CanvasLayer"]
 layer = 10
