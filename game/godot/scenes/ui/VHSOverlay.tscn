@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Shader" path="res://assets/shaders/vhs.gdshader" id="1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+shader = ExtResource("1")
+shader_parameter/scanline_intensity = 0.55
+shader_parameter/noise_intensity = 0.18
+shader_parameter/chroma_shift = 0.006
+shader_parameter/wobble_strength = 0.003
+shader_parameter/vignette_strength = 0.65
+shader_parameter/color_bleed = 0.35
+shader_parameter/pixel_size = Vector2(640, 360)
+
+[node name="VHSOverlay" type="CanvasLayer"]
+layer = 10
+
+[node name="Screen" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_1")
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

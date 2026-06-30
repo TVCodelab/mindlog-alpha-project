@@ -14,10 +14,11 @@ Inventory="*res://scripts/autoload/Inventory.gd"
 AudioMgr="*res://scripts/autoload/AudioMgr.gd"
 
 [display]
-window/size/viewport_width=1280
-window/size/viewport_height=720
+window/size/viewport_width=640
+window/size/viewport_height=360
 window/size/resizable=true
 window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
 window/handheld/orientation=1
 
 [input]
