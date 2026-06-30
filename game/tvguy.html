@@ -43,15 +43,27 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;
 
 /* Boot */
 #boot{position:fixed;inset:0;z-index:25;background:#000;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8vw}
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:clamp(12px,5vw,8vw);overflow:hidden}
 #boot pre{color:#84e7a0;font-family:'VT323',monospace;
-  font-size:clamp(14px,3.8vw,21px);line-height:1.65;white-space:pre-wrap;
-  max-width:560px;width:100%;text-shadow:0 0 7px rgba(132,231,160,.28)}
-#bootbtn{margin-top:28px;background:transparent;border:1px solid #84e7a0;color:#84e7a0;
+  font-size:clamp(13px,3.8vw,21px);line-height:1.65;white-space:pre-wrap;
+  max-width:560px;width:100%;text-shadow:0 0 7px rgba(132,231,160,.28);
+  overflow-y:auto;max-height:calc(100dvh - 110px);-webkit-overflow-scrolling:touch;
+  flex-shrink:1}
+#bootbtn{margin-top:18px;background:transparent;border:1px solid #84e7a0;color:#84e7a0;
   font-family:'VT323',monospace;font-size:22px;letter-spacing:.2em;
-  padding:11px 32px;cursor:pointer;opacity:0;transition:opacity .4s;min-height:44px}
+  padding:11px 32px;cursor:pointer;opacity:0;transition:opacity .4s;
+  min-height:44px;flex-shrink:0;touch-action:manipulation}
 #bootbtn.show{opacity:.9}
 #bootbtn:hover,#bootbtn:focus-visible{box-shadow:0 0 0 2px rgba(132,231,160,.25);outline:none}
+@media (orientation:landscape) and (max-height:520px){
+  #boot{justify-content:flex-start;flex-direction:row;flex-wrap:wrap;
+    align-content:center;gap:0;padding:10px 6vw}
+  #boot pre{font-size:clamp(11px,1.9vh,15px);line-height:1.3;
+    max-height:calc(100dvh - 70px);max-width:none;flex:1 1 auto}
+  #bootbtn{margin-top:0;margin-left:18px;font-size:18px;padding:9px 18px;
+    align-self:flex-end;flex:0 0 auto}
+}
 
 /* Pointer-lock prompt */
 #lockprompt{position:fixed;inset:0;z-index:12;background:rgba(0,0,0,.75);
@@ -1705,7 +1717,9 @@ if(isMobile){
   // Landscape enforcement + button layout
   function checkOrient(){
     const ls=innerWidth>innerHeight;
-    document.getElementById('rotate-prompt').style.display=ls?'none':'flex';
+    // Rotate prompt only during active gameplay — not during boot/tape/end screens
+    const inGame=state===ST.PLAY||state===ST.CORRIDOR||state===ST.TOWER||state===ST.LOCK;
+    document.getElementById('rotate-prompt').style.display=(!ls&&inGame)?'flex':'none';
     const cb=document.getElementById('crouchbtn'),ub=document.getElementById('uvbtn'),
           eb=document.getElementById('mbtn'),jy=document.getElementById('joy');
     if(ls){
@@ -1903,14 +1917,17 @@ function bootSequence(){
   const btn=document.getElementById('bootbtn');
   let i=0;
   const t=setInterval(()=>{
-    if(i>=BOOT_TEXT.length){ clearInterval(t); btn.classList.add('show'); return; }
+    if(i>=BOOT_TEXT.length){ clearInterval(t); btn.classList.add('show'); pre.scrollTop=pre.scrollHeight; return; }
     pre.textContent+=BOOT_TEXT[i++];
+    pre.scrollTop=pre.scrollHeight;
   },18);
-  btn.addEventListener('click',()=>{
+  function doStart(){
     document.getElementById('boot').style.transition='opacity .5s';
     document.getElementById('boot').style.opacity='0';
     setTimeout(()=>{ document.getElementById('boot').style.display='none'; startGame(); },520);
-  },{once:true});
+  }
+  btn.addEventListener('click', doStart, {once:true});
+  btn.addEventListener('touchstart', e=>{ e.preventDefault(); doStart(); }, {once:true, passive:false});
 }
 function toggleCrouch(){
   if(waking||state===ST.WATCH||state===ST.TOWER&&false) return;
@@ -1954,6 +1971,7 @@ function startGame(){
       yaw=Math.PI; pitch=0; camera.rotation.set(0,yaw,0,'YXZ');
       state=isMobile?ST.PLAY:ST.LOCK;
       if(!isMobile) document.getElementById('lockprompt').classList.remove('hide');
+      if(typeof checkOrient==='function') checkOrient();
     }
   },16);
   animate();
